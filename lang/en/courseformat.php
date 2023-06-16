@@ -23,5 +23,6 @@
  */
 
 $string['courseindex'] = 'Course index';
+$string['courseindexoptions'] = 'Course index options';
 $string['preference:coursesectionspreferences'] = 'Section user preferences for course {$a}';
 $string['privacy:metadata:preference:coursesectionspreferences'] = 'Section user preferences like collapsed and expanded.';
