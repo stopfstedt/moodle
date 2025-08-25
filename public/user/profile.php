@@ -46,10 +46,15 @@ $reset          = optional_param('reset', null, PARAM_BOOL);
 $userid = $userid ?: $USER->id;
 $PAGE->set_url('/user/profile.php', ['id' => $userid]);
 
+// Set a default page title that does not leak the user's name.
+// This title may get overridden further down if current user permissions allow for it.
+$struser = get_string('user');
+$PAGE->set_context(context_system::instance());
+$PAGE->set_title($struser);
+
 if (!empty($CFG->forceloginforprofiles)) {
     require_login();
     if (isguestuser()) {
-        $PAGE->set_context(context_system::instance());
         echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('guestcantaccessprofiles', 'error'),
                               get_login_url(),
@@ -62,7 +67,6 @@ if (!empty($CFG->forceloginforprofiles)) {
 }
 
 if ((!$user = $DB->get_record('user', array('id' => $userid))) || ($user->deleted)) {
-    $PAGE->set_context(context_system::instance());
     echo $OUTPUT->header();
     if (!$user) {
         echo $OUTPUT->notification(get_string('invaliduser', 'error'));
@@ -79,9 +83,6 @@ $context = $usercontext = context_user::instance($userid, MUST_EXIST);
 if (!user_can_view_profile($user, null, $context)) {
 
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366).
-    $struser = get_string('user');
-    $PAGE->set_context(context_system::instance());
-    $PAGE->set_title($struser);  // Do not leak the name.
     $PAGE->set_heading($struser);
     $PAGE->set_pagelayout('mypublic');
     $PAGE->add_body_class('limitedwidth');
