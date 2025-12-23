@@ -68,6 +68,7 @@
                             }}{{#defaulteventcontext}} clickable{{/defaulteventcontext}}{{!
                             }}{{#hasevents}} hasevent{{/hasevents}}{{!
                         }}"
+                        tabindex="0"
                         data-day="{{mday}}"
                         data-day-timestamp="{{timestamp}}"
                         data-drop-zone="month-view-day"
@@ -85,6 +86,16 @@
                             {{^hasevents}}
                                 <span aria-hidden="true"><span class="day-number-circle"><span class="day-number">{{mday}}</span></span></span>
                             {{/hasevents}}
+                            <button
+                                type="button"
+                                class="btn btn-subtle-secondary btn-icon float-right"
+                                data-action="day-new-event-button"
+                                aria-haspopup="true"
+                                aria-label="{{#str}}neweventon, core_calendar, {{#userdate}}{{neweventtimestamp}}, {{#str}} strftimedate, core_langconfig {{/str}}{{/userdate}}{{/str}}"
+                                title="{{#str}}neweventon, core_calendar, {{#userdate}}{{neweventtimestamp}}, {{#str}} strftimedate, core_langconfig {{/str}}{{/userdate}}{{/str}}"
+                            >
+                                {{#pix}} t/add, core {{/pix}}
+                            </button>
                             {{#hasevents}}
                                 <div data-region="day-content">
                                     <ul>
@@ -157,8 +168,18 @@
                             {{^hasevents}}
                                 <span aria-hidden="true"><span class="day-number-circle"><span class="day-number">{{mday}}</span></span></span>
                             {{/hasevents}}
+                            <button
+                              type="button"
+                              class="btn btn-subtle-secondary btn-icon"
+                              data-action="day-new-event-button"
+                              aria-haspopup="true"
+                              aria-label="{{#str}}neweventon, core_calendar, {{#userdate}}{{neweventtimestamp}}, {{#str}} strftimedate, core_langconfig {{/str}}{{/userdate}}{{/str}}"
+                              title="{{#str}}neweventon, core_calendar, {{#userdate}}{{neweventtimestamp}}, {{#str}} strftimedate, core_langconfig {{/str}}{{/userdate}}{{/str}}"
+                            >
+                                {{#pix}} t/add, core {{/pix}}
+                            </button>
                         </div>
-                    </td>
+                   </td>
                 {{/days}}
                 {{#postpadding}}
                     <td class="dayblank">&nbsp;</td>

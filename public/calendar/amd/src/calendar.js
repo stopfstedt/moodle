@@ -52,7 +52,7 @@ function(
     var SELECTORS = {
         ROOT: "[data-region='calendar']",
         DAY: "[data-region='day']",
-        NEW_EVENT_BUTTON: "[data-action='new-event-button']",
+        DAY_NEW_EVENT_BUTTON: "[data-action='day-new-event-button']",
         DAY_CONTENT: "[data-region='day-content']",
         LOADING_ICON: '.loading-icon',
         VIEW_DAY_LINK: "[data-action='view-day-link']",
@@ -227,6 +227,28 @@ function(
         registerCalendarEventListeners(root, eventFormPromise);
 
         if (contextId) {
+            // Bind key events to "new event" buttons in the calendar grid.
+            root.on('keypress', SELECTORS.DAY_NEW_EVENT_BUTTON, function(e) {
+                var target = $(e.target);
+                const dateContainer = target.closest(SELECTORS.DAY);
+                const startTime = $(dateContainer).attr('data-new-event-timestamp');
+                eventFormPromise.then(function(modal) {
+                    var wrapper = target.closest(CalendarSelectors.wrapper);
+                    modal.setCourseId(wrapper.data('courseid'));
+
+                    var categoryId = wrapper.data('categoryid');
+                    if (typeof categoryId !== 'undefined') {
+                        modal.setCategoryId(categoryId);
+                    }
+
+                    modal.setContextId(wrapper.data('contextId'));
+                    modal.setStartTime(startTime);
+                    modal.show();
+                    return;
+                }).catch(Notification.exception);
+                e.preventDefault();
+            });
+
             // Bind click events to calendar days.
             root.on('click', SELECTORS.DAY, function(e) {
                 var target = $(e.target);

@@ -191,6 +191,7 @@ $string['moreevents'] = '{$a} more';
 $string['namewithsource'] = '{$a->name} ({$a->source})';
 $string['never'] = 'Never';
 $string['newevent'] = 'New event';
+$string['neweventon'] = 'New event on {$a}';
 $string['newmonthannouncement'] = 'Calendar is now set to {$a}.';
 $string['nocalendarsubscriptionsimportexternal'] = 'No calendar subscriptions yet. <a href="{$a}">Import an external calendar</a>';
 $string['notitle'] = 'no title';
