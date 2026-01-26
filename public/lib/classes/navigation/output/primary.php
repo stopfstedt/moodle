@@ -35,7 +35,7 @@ use filter_manager;
  */
 class primary implements renderable, templatable {
     /** @var \moodle_page $page the moodle page that the navigation belongs to */
-    private $page = null;
+    protected $page = null;
 
     /**
      * primary constructor.
