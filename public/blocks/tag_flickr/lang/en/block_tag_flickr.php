@@ -22,6 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['apierror'] = 'Something went wrong while retrieving data from Flickr. Contact your administrator.';
+$string['apikey'] = 'API key';
+$string['apikeyinfo'] = 'Get a <a href="https://www.flickr.com/services/apps/create/">Flickr API key</a> for your Moodle site.';
+$string['apikeymissing'] = 'The Flickr API key is not set. Contact your administrator.';
 $string['configtitle'] = 'Flickr block title';
 $string['date-posted-asc'] = 'Date posted ASC';
 $string['date-posted-desc'] = 'Date posted DESC';

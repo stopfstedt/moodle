@@ -23,7 +23,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-define('FLICKR_DEV_KEY', '4fddbdd7ff2376beec54d7f6afad425e');
 define('DEFAULT_NUMBER_OF_PHOTOS', 6);
 
 require_once("{$CFG->libdir}/flickrclient.php");
@@ -47,12 +46,25 @@ class block_tag_flickr extends block_base {
     }
 
     function get_content() {
-        global $CFG, $USER;
+        global $CFG, $OUTPUT, $USER;
 
         //note: do NOT include files at the top of this file
         require_once($CFG->libdir . '/filelib.php');
 
         if ($this->content !== NULL) {
+            return $this->content;
+        }
+
+        $this->content = new stdClass();
+        $this->content->text = '';
+        $this->content->footer = '';
+
+        if (!$apikey = get_config('block_tag_flickr', 'apikey')) {
+            $this->content->text = $OUTPUT->notification(
+                get_string('apikeymissing', 'block_tag_flickr'),
+                'error',
+                false
+            );
             return $this->content;
         }
 
@@ -67,9 +79,6 @@ class block_tag_flickr extends block_base {
         }
 
         if (empty($tagobject)) {
-            $this->content = new stdClass;
-            $this->content->text = '';
-            $this->content->footer = '';
             return $this->content;
         }
 
@@ -98,7 +107,7 @@ class block_tag_flickr extends block_base {
         if(!empty($this->config->photoset)){
 
             $request = 'https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos';
-            $request .= '&api_key='.FLICKR_DEV_KEY;
+            $request .= '&api_key=' . $apikey;
             $request .= '&photoset_id='.$this->config->photoset;
             $request .= '&per_page='.$numberofphotos;
             $request .= '&format=json';
@@ -110,6 +119,14 @@ class block_tag_flickr extends block_base {
             if (!is_array($search) || json_last_error() !== JSON_ERROR_NONE) {
                 // The response didn't appear to be in correct format.
                 return;
+            }
+            if ($this->response_has_error($search)) {
+                $this->content->text = $OUTPUT->notification(
+                    get_string('apierror', 'block_tag_flickr'),
+                    'error',
+                    false
+                );
+                return $this->content;
             }
 
             foreach ($search['photoset']['photo'] as $p){
@@ -123,7 +140,7 @@ class block_tag_flickr extends block_base {
         else{
 
             $request = 'https://api.flickr.com/services/rest/?method=flickr.photos.search';
-            $request .= '&api_key='.FLICKR_DEV_KEY;
+            $request .= '&api_key=' . $apikey;
             $request .= '&tags='.$tagscsv;
             $request .= '&per_page='.$numberofphotos;
             $request .= '&sort='.$sortby;
@@ -137,11 +154,16 @@ class block_tag_flickr extends block_base {
                 // The response didn't appear to be in correct format.
                 return;
             }
+            if ($this->response_has_error($search)) {
+                $this->content->text = $OUTPUT->notification(
+                    get_string('apierror', 'block_tag_flickr'),
+                    'error',
+                    false
+                );
+                return $this->content;
+            }
             $photos = array_values($search['photos']['photo']);
         }
-
-
-        if(strcmp($search['stat'], 'ok') != 0) return; //if no results were returned, exit...
 
         //Accessibility: render the list of photos
         $text = '<ul class="inline-list">';
@@ -151,9 +173,7 @@ class block_tag_flickr extends block_base {
          }
         $text .= "</ul>\n";
 
-        $this->content = new stdClass;
         $this->content->text = $text;
-        $this->content->footer = '';
 
         return $this->content;
     }
@@ -211,6 +231,26 @@ class block_tag_flickr extends block_base {
             'plugin' => new stdClass(),
         ];
     }
+
+    /**
+     * This block can be configured.
+     *
+     * @return boolean
+     */
+    public function has_config() {
+        return true;
+    }
+
+    /**
+     * Checks the error status of the given response from an API call to Flickr.
+     *
+     * @link https://www.flickr.com/services/api/response.rest.html
+     * @link https://www.flickr.com/services/api/response.json.html
+     *
+     * @param array $data The response data.
+     * @return bool TRUE if the response status indicates a failure, FALSE otherwise.
+     */
+    protected function response_has_error(array $data) {
+        return 'ok' !== $data['stat'];
+    }
 }
-
-
